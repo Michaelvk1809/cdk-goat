@@ -41,14 +41,12 @@ def error_pages(overrides):
     async def middleware(request, handler):
         try:
             response = await handler(request)
-            override = overrides.get(response.status)
-            if override is None:
+            if (override := overrides.get(response.status)) is None:
                 return response
             else:
                 return await override(request, response)
         except web.HTTPException as ex:
-            override = overrides.get(ex.status)
-            if override is None:
+            if (override := overrides.get(ex.status)) is None:
                 raise
             else:
                 return await override(request, ex)

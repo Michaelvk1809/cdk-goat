@@ -12,8 +12,7 @@ def authorize(ensure_admin=False):
     def __decorator__(handler):
         @wraps(handler)
         async def __wrapper__(request: Request):
-            user = await get_auth_user(request)
-            if user is None:
+            if (user := await get_auth_user(request)) is None:
                 raise HTTPUnauthorized()
             if ensure_admin and not user.is_admin:
                 raise HTTPForbidden()
